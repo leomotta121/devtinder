@@ -1,13 +1,21 @@
 const { default: axios } = require('axios');
 const Dev = require('../models/Dev');
 
-exports.index = (req, res, next) => {
-  return res.json({ message: 'return devs' });
+exports.index = async (req, res, next) => {
+  const dev = await Dev.find();
+
+  return res.json(dev);
 };
 
 exports.store = async (req, res, next) => {
   try {
     const { username } = req.body;
+
+    const userExists = await Dev.findOne({ user: username });
+
+    if (userExists) {
+      return res.json(userExists);
+    }
 
     const response = await axios.get(`https://api.github.com/users/${username}`);
 
