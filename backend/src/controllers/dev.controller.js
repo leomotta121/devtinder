@@ -2,9 +2,13 @@ const { default: axios } = require('axios');
 const Dev = require('../models/Dev');
 
 exports.index = async (req, res, next) => {
-  const dev = await Dev.find();
+  try {
+    const dev = await Dev.find();
 
-  return res.json(dev);
+    return res.json(dev);
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.store = async (req, res, next) => {
