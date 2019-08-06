@@ -3,9 +3,19 @@ const Dev = require('../models/Dev');
 
 exports.index = async (req, res, next) => {
   try {
-    const dev = await Dev.find();
+    const { user } = req.headers;
 
-    return res.json(dev);
+    const loggedDev = await Dev.findById(user);
+
+    const devs = await Dev.find({
+      $and: [
+        { _id: { $ne: user } },
+        { _id: { $nin: loggedDev.likes } },
+        { _id: { $nin: loggedDev.dislikes } }
+      ]
+    });
+
+    return res.json(devs);
   } catch (error) {
     next(error);
   }
@@ -25,11 +35,7 @@ exports.store = async (req, res, next) => {
 
     const { name, bio, avatar_url: avatar } = response.data;
 
-    console.log({ name, username, bio, avatar });
-
     const dev = await Dev.create({ name, user: username, bio, avatar });
-
-    console.log(dev);
 
     return res.json({ dev });
   } catch (error) {
