@@ -17,11 +17,7 @@ exports.store = async (req, res, next) => {
       );
     }
 
-    if (targetDev.likes.includes(loggedDev._id)) {
-      console.log('deu match');
-    }
-
-    loggedDev.likes.push(targetDev._id);
+    loggedDev.dislikes.push(targetDev._id);
 
     await loggedDev.save();
 
