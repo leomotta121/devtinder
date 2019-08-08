@@ -37,7 +37,7 @@ exports.store = async (req, res, next) => {
 
     const dev = await Dev.create({ name, user: username, bio, avatar });
 
-    return res.json({ dev });
+    return res.json(dev);
   } catch (error) {
     next(error);
   }
