@@ -24,7 +24,13 @@ export default function Main({ match }) {
   }, [match.params.id]);
 
   async function handleLike(id) {
-    console.log(id);
+    await api.post(`/v1/like/store/${id}`, null, {
+      headers: {
+        user: match.params.id
+      }
+    });
+
+    setUsers(users.filter(user => user._id !== id));
   }
 
   async function handleDislike(id) {
@@ -54,8 +60,8 @@ export default function Main({ match }) {
                 <img src={dislike} alt="dislike" />
               </button>
 
-              <button type="button">
-                <img src={like} alt="like" onClick={() => handleLike(user._id)} />
+              <button type="button" onClick={() => handleLike(user._id)}>
+                <img src={like} alt="like" />
               </button>
             </div>
           </li>
