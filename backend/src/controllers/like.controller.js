@@ -18,7 +18,16 @@ exports.store = async (req, res, next) => {
     }
 
     if (targetDev.likes.includes(loggedDev._id)) {
-      console.log('deu match');
+      const loggedSocket = req.connectedUsers[user];
+      const targetSocket = req.connectedUsers[devId];
+
+      if (loggedSocket) {
+        req.io.to(loggedSocket).emit('match', targetDev);
+      }
+
+      if (targetSocket) {
+        req.io.to(targetSocket).emit('match', loggedDev);
+      }
     }
 
     loggedDev.likes.push(targetDev._id);

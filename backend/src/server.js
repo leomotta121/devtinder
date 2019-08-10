@@ -7,7 +7,23 @@ const ApiError = require('./services/apiError');
 const v1 = require('./routes/v1');
 
 const app = express();
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
+const connectedUsers = {};
+
+io.on('connection', socket => {
+  const { user } = socket.handshake.query;
+
+  connectedUsers[user] = socket.id;
+});
+
+app.use((req, res, next) => {
+  req.io = io;
+  req.connectedUsers = connectedUsers;
+
+  return next();
+});
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -40,6 +56,6 @@ mongoose.connect(
   }
 );
 
-app.listen(3333, () => {
+server.listen(3333, () => {
   console.log('app listening on post 3333');
 });
